@@ -40,9 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const telegramChannelBtn = document.getElementById('telegramChannelBtn');
 
     startBtn.addEventListener('click', async () => {
-        const gameChoice = parseInt(gameSelect.value);
-        const keyCount = parseInt(keyCountSelect.value);
-        const game = games[gameChoice];
+    // Open WhatsApp channel
+    const confirmed = confirm('To generate keys, you need to join our WhatsApp channel. Click OK to proceed.');
+    if (!confirmed) {
+        return;
+    }
+    window.open('https://whatsapp.com/channel/0029Vac12TNATRSelgaR3A1F', '_blank');
+
+    const gameChoice = parseInt(gameSelect.value);
+    const keyCount = parseInt(keyCountSelect.value);
+    const game = games[gameChoice];
+});
 
         keyCountLabel.innerText = `Number of keys: ${keyCount}`;
 
