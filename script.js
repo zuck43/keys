@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const EVENTS_DELAY = 20000;
 
+    // Initialize AdsGram SDK
+    const AdController = window.Adsgram.init({ blockId: "1715" });
+
     const games = {
         1: {
             name: 'Riding Extreme 3D',
@@ -44,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const keyCount = parseInt(keyCountSelect.value);
         const game = games[gameChoice];
 
-
         keyCountLabel.innerText = `Number of keys: ${keyCount}`;
 
         progressBar.style.width = '0%';
@@ -59,6 +61,20 @@ document.addEventListener('DOMContentLoaded', () => {
         startBtn.classList.add('hidden');
         copyAllBtn.classList.add('hidden');
         startBtn.disabled = true;
+
+        try {
+            // Show AdsGram ad before generating keys
+            const adResult = await AdController.show();
+            if (adResult.done) {
+                console.log('Ad watched till the end. Generating keys...');
+            } else {
+                console.log('Ad was skipped or there was an error.');
+            }
+        } catch (error) {
+            console.error('Error showing ad:', error);
+            startBtn.disabled = false;
+            return;
+        }
 
         let progress = 0;
         const updateProgress = (increment, message) => {
@@ -158,11 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('creatorChannelBtn').addEventListener('click', () => {
-        window.open('https://telegram.me/Sam_Dm_bot', '_blank');
+        window.open('https://telegram.me/', '_blank');
     });
 
     telegramChannelBtn.addEventListener('click', () => {
-        window.open('https://telegram.me/Insta_Buy_Follower', '_blank');
+        window.open('https://telegram.me/', '_blank');
     });
 
     const generateClientId = () => {
@@ -221,9 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Authorization': `Bearer ${clientToken}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                promoId
-            })
+            body: JSON.stringify({ promoId })
         });
 
         if (!response.ok) {
@@ -231,17 +245,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const data = await response.json();
-        return data.promoCode;
+        return data.code;
     };
 
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    const delayRandom = () => Math.random() * 0.5 + 0.75;
+
     const generateUUID = () => {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0,
+                v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
-
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    const delayRandom = () => Math.random() / 3 + 1;
 });
+                
