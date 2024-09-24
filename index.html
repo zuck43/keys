@@ -8,8 +8,8 @@
 </head>
 <body>
 
-    <h1>Google Drive Dual Audio Video Player</h1>
-    <p>Enter your Google Drive link:</p>
+    <h1>Google Drive Video Player (MP4 & MKV Support)</h1>
+    <p>Enter your Google Drive or direct video link (supports MP4 & MKV):</p>
     
     <!-- Input Form -->
     <input type="text" id="driveLink" placeholder="Enter Google Drive Link" size="50">
@@ -17,7 +17,9 @@
     
     <!-- Video Player -->
     <div id="videoContainer" style="display:none; margin-top:20px;">
-        <video id="player" controls crossorigin playsinline></video>
+        <video id="player" controls crossorigin playsinline>
+            <!-- Sources will be dynamically set -->
+        </video>
     </div>
 
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
@@ -28,8 +30,10 @@
             if(fileId) {
                 const videoUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
                 setupPlayer(videoUrl);
+            } else if (inputLink.endsWith('.mp4') || inputLink.endsWith('.mkv')) {
+                setupPlayer(inputLink); // Direct MP4 or MKV file link
             } else {
-                alert('Invalid Google Drive Link');
+                alert('Invalid link. Please enter a valid Google Drive or direct video link.');
             }
         }
 
@@ -44,16 +48,23 @@
         function setupPlayer(videoUrl) {
             const videoContainer = document.getElementById('videoContainer');
             const videoElement = document.getElementById('player');
-            
-            // Set up the video source
-            videoElement.src = videoUrl;
-            
+
+            // Remove existing sources if any
+            videoElement.innerHTML = '';
+
+            // Set video source based on the file format (MP4 or MKV)
+            if (videoUrl.endsWith('.mp4')) {
+                videoElement.innerHTML = `<source src="${videoUrl}" type="video/mp4">`;
+            } else if (videoUrl.endsWith('.mkv')) {
+                videoElement.innerHTML = `<source src="${videoUrl}" type="video/x-matroska">`;
+            }
+
             // Initialize Plyr
             new Plyr(videoElement, {
                 controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
                 settings: ['captions', 'quality', 'speed', 'loop'],
             });
-            
+
             // Show the video container
             videoContainer.style.display = 'block';
         }
