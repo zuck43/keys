@@ -1,62 +1,62 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Promo Code Generator</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- AdsGram SDK -->
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+    <title>Google Drive Video Player</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Game Promo Code Generator</h1>
-        <div class="form-group">
-            <label for="gameSelect">Select Game:</label>
-            <select id="gameSelect">
-                <option value="1">Riding Extreme 3D</option>
-                <option value="2">Chain Cube 2048</option>
-                <option value="3">My Clone Army</option>
-                <option value="4">Train Miner</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="keyCountSelect">Select Number of Keys:</label>
-            <select id="keyCountSelect">
-                <option value="1">1</option>
-                <option value="5">5</option>
-            </select>
-        </div>
-        <button id="startBtn">Generate Keys</button>
 
-        <div id="progressContainer" class="hidden">
-            <div class="progress-bar">
-                <div id="progressBar"></div>
-            </div>
-            <p id="progressText">0%</p>
-            <p id="progressLog">Starting...</p>
-        </div>
-
-        <div id="keyContainer" class="hidden">
-            <h2 id="generatedKeysTitle" class="hidden">Generated Keys</h2>
-            <div id="keysList"></div>
-            <button id="copyAllBtn" class="hidden">Copy All Keys</button>
-        </div>
-
-        <p id="keyCountLabel">Number of keys:</p>
-
-        <button id="generateMoreBtn">Generate More Keys</button>
-       
-        <p id="copyStatus" class="hidden">Keys copied to clipboard!</p>
-        
-        <div class="footer">
-            <p>Disclaimer: This tool is for educational purposes only. Use responsibly.</p>
-            
-        </div>
+    <h1>Google Drive Dual Audio Video Player</h1>
+    <p>Enter your Google Drive link:</p>
+    
+    <!-- Input Form -->
+    <input type="text" id="driveLink" placeholder="Enter Google Drive Link" size="50">
+    <button onclick="generateLink()">Play Video</button>
+    
+    <!-- Video Player -->
+    <div id="videoContainer" style="display:none; margin-top:20px;">
+        <video id="player" controls crossorigin playsinline></video>
     </div>
 
-    <script src="script.js"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        function generateLink() {
+            const inputLink = document.getElementById('driveLink').value;
+            const fileId = extractFileId(inputLink);
+            if(fileId) {
+                const videoUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                setupPlayer(videoUrl);
+            } else {
+                alert('Invalid Google Drive Link');
+            }
+        }
+
+        // Extracts the file ID from a Google Drive link
+        function extractFileId(link) {
+            const regex = /(?:drive\.google\.com\/file\/d\/|drive\.google\.com\/open\?id=)([a-zA-Z0-9-_]+)/;
+            const match = link.match(regex);
+            return match ? match[1] : null;
+        }
+
+        // Sets up the video player with Plyr
+        function setupPlayer(videoUrl) {
+            const videoContainer = document.getElementById('videoContainer');
+            const videoElement = document.getElementById('player');
+            
+            // Set up the video source
+            videoElement.src = videoUrl;
+            
+            // Initialize Plyr
+            new Plyr(videoElement, {
+                controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
+                settings: ['captions', 'quality', 'speed', 'loop'],
+            });
+            
+            // Show the video container
+            videoContainer.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
