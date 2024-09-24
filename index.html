@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
-    <title>Google Drive Video Player</title>
+    <title>Google Drive & PixelDrain Video Player</title>
 </head>
 <body>
 
-    <h1>Google Drive Video Player (MP4 & MKV Support)</h1>
-    <p>Enter your Google Drive or direct video link (supports MP4 & MKV):</p>
+    <h1>Google Drive & PixelDrain Video Player (MP4 & MKV Support)</h1>
+    <p>Enter your Google Drive, PixelDrain, or direct video link (supports MP4 & MKV):</p>
     
     <!-- Input Form -->
-    <input type="text" id="driveLink" placeholder="Enter Google Drive Link" size="50">
+    <input type="text" id="driveLink" placeholder="Enter Google Drive or PixelDrain Link" size="50">
     <button onclick="generateLink()">Play Video</button>
     
     <!-- Video Player -->
@@ -26,14 +26,25 @@
     <script>
         function generateLink() {
             const inputLink = document.getElementById('driveLink').value;
-            const fileId = extractFileId(inputLink);
-            if(fileId) {
-                const videoUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-                setupPlayer(videoUrl);
+            if (inputLink.includes('drive.google.com')) {
+                const fileId = extractFileId(inputLink);
+                if(fileId) {
+                    const videoUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                    setupPlayer(videoUrl);
+                } else {
+                    alert('Invalid Google Drive link.');
+                }
+            } else if (inputLink.includes('pixeldra.in')) {
+                const pixelDrainUrl = getPixelDrainDirectLink(inputLink);
+                if(pixelDrainUrl) {
+                    setupPlayer(pixelDrainUrl);
+                } else {
+                    alert('Invalid PixelDrain link.');
+                }
             } else if (inputLink.endsWith('.mp4') || inputLink.endsWith('.mkv')) {
                 setupPlayer(inputLink); // Direct MP4 or MKV file link
             } else {
-                alert('Invalid link. Please enter a valid Google Drive or direct video link.');
+                alert('Invalid link. Please enter a valid video link.');
             }
         }
 
@@ -42,6 +53,14 @@
             const regex = /(?:drive\.google\.com\/file\/d\/|drive\.google\.com\/open\?id=)([a-zA-Z0-9-_]+)/;
             const match = link.match(regex);
             return match ? match[1] : null;
+        }
+
+        // Extracts the direct PixelDrain link from a PixelDrain link
+        function getPixelDrainDirectLink(link) {
+            if (link.includes('pixeldra.in')) {
+                return link.replace('?download', ''); // Removes '?download' to get the direct stream link
+            }
+            return null;
         }
 
         // Sets up the video player with Plyr
